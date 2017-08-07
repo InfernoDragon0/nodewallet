@@ -1,0 +1,19 @@
+{
+  "name": "nodewallet",
+  "version": "1.0.0",
+  "description": "node js wallet",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/InfernoDragon0/nodewallet.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/InfernoDragon0/nodewallet/issues"
+  },
+  "homepage": "https://github.com/InfernoDragon0/nodewallet#readme"
+}
