@@ -3,6 +3,9 @@ var timetoexpire = 15000;
 var crypto = require('crypto');
 var encryption = 'sha256';
 
+module.exports.checkAuthorized = checkAuthorized;
+module.exports.testAuthRequest = testAuthRequest;
+module.exports.authRequest = authRequest;
 
 function checkAuthorized(session) { //doesnt do anything yet cos no session stuff added
     var timenow = Math.floor(Date.now() / 1000);
@@ -14,11 +17,27 @@ function checkAuthorized(session) { //doesnt do anything yet cos no session stuf
     }
 }
 
-function authRequest(sess, user, pin) {
+function testAuthRequest(sess, user, pin) {
 
     if (fakepinAuths.hasOwnProperty(user)) {
         var hashverify = crypto.createHash('sha256').update(pin).digest('base64');
         if (hashverify == fakepinAuths[user]) { //TODO database.getSHA256Pin(user)
+            sess.authorized = Math.floor(Date.now() / 1000); //sets current time as authorized timing
+            return true;
+        }
+        else {       
+            return false;
+        }
+    }
+    else {
+        return false;
+    }
+}
+
+function authRequest(sess, user, pin) {
+    if (fakepinAuths.hasOwnProperty(user)) {
+        var hashverify = crypto.createHash('sha256').update(pin).digest('base64');
+        if (hashverify == mongoReader.getSHA256Pin(user)) { //TODO database.getSHA256Pin(user)
             sess.authorized = Math.floor(Date.now() / 1000); //sets current time as authorized timing
             return true;
         }

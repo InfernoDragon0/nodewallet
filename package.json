@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/InfernoDragon0/nodewallet/issues"
   },
-  "homepage": "https://github.com/InfernoDragon0/nodewallet#readme"
+  "homepage": "https://github.com/InfernoDragon0/nodewallet#readme",
+  "dependencies": {
+    "auth0-lock-passwordless": "^2.2.3",
+    "express-session": "^1.15.5"
+  }
 }

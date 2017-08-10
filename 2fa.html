@@ -1,0 +1,16 @@
+<html>
+    <head>
+    </head>
+    <body>
+        <script src="http://cdn.auth0.com/js/lock-passwordless-2.2.3.min.js"></script>
+        <script>
+        function loginSMS() {
+            var lock = new Auth0LockPasswordless('EtHOvCUbD2F6s46WjSx0inahQV673bq9', 'mushroom.auth0.com');
+            lock.sms( {callbackURL: 'http://localhost:5001/tfasuccess'} );
+        }
+        </script>
+        <p>Press button to 2fa</p>
+        <button onclick="loginSMS()">Login 2FA</button>
+
+    </body>
+</html>
