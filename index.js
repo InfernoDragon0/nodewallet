@@ -45,16 +45,59 @@ app.post('/authenticate', function (req, res) { //base page
 
     if (authenticator.checkAuthorized(req.session)) {
         res.send("Already Authorized. At " + req.session.authorized);
+        //TODO do wallet stuff here
     }
     else {
         if (authenticator.testAuthRequest(req.session, req.body.user, req.body.pin)) {
             res.render(path.join(__dirname + '/2fa.html'));
-            //send 2fa here
+
         }
         else {
             res.send("Invalid user and pin combination. try again!");
         }
     }
+});
+
+app.post('/walletquery', (req, res) => {
+    if (!req.body.customerid) {
+        res.send("wallet info is alot of $$");
+        return;
+    }
+});
+
+app.post('/walletadd', (req, res) => {
+    if (!req.body.transactionid || !req.body.customerid) {
+        res.send("transactionid and customerid is required");
+        return;
+    }
+});
+
+app.post('/walletuse', (req,res) => {
+    if (!req.body.amount || !req.body.merchantid || !req.body.customerid) {
+        res.send("Please provide a proper amount, merchant id and customer id");
+        return;
+    }
+
+    if (authenticator.checkAuthorized(req.session)) {
+        //TODO var dpromise = database.updateWalletAmount(-amount, merchantid, customerid, res);
+        /**
+         *  dpromise.then((value) => { //send value as true or false
+         *      if (value) {
+         *          res.send("Successful payment. Thank you for using the payment");
+         *      }
+         *      else {
+         *          res.send("There was an error processing the payment.' + value);
+         *      }
+         *  });
+         */
+        //TODO do wallet stuff here
+        //TODO send success on update wallet
+    }
+    else {
+        //res.send("Authorization required."); //for bot, send to storagequeue after complete
+        res.redirect("/loginpin");
+    }
+
 });
 
 app.get('/tfasuccess', (req, res) => {
