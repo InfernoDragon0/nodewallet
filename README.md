@@ -1,2 +1,0 @@
-# nodewallet
-node js wallet 
