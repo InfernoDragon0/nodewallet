@@ -3,6 +3,7 @@ var path = require("path"); //pathing system
 var bodyParser = require('body-parser'); //parse POST data
 var session = require('express-session'); //temporary to store sensitive data, see if theres better way
 var authenticator = require("./nodemodjs/security.js");
+const database = require("./nodemodjs/BTCosmosDB.js");
 const express = require('express'); //express is good
 const app = express();
 //const http = require('http'); //http stuff, not needed yet
@@ -45,16 +46,17 @@ app.post('/authenticate', function (req, res) { //base page
 
     if (authenticator.checkAuthorized(req.session)) {
         res.send("Already Authorized. At " + req.session.authorized);
-        //TODO do wallet stuff here
     }
     else {
-        if (authenticator.testAuthRequest(req.session, req.body.user, req.body.pin)) {
-            res.render(path.join(__dirname + '/2fa.html'));
-
-        }
-        else {
-            res.send("Invalid user and pin combination. try again!");
-        }
+        var promisething = authenticator.authRequest(req.session, req.body.user, req.body.pin);
+        promisething.then((value) => {
+            if (value) {
+                res.render(path.join(__dirname + '/2fa.html'));
+            }
+            else {
+                res.send("Invalid user and pin combination. try again!");
+            }
+        })
     }
 });
 
@@ -79,17 +81,46 @@ app.post('/walletuse', (req,res) => {
     }
 
     if (authenticator.checkAuthorized(req.session)) {
-        //TODO var dpromise = database.updateWalletAmount(-amount, merchantid, customerid, res);
-        /**
-         *  dpromise.then((value) => { //send value as true or false
-         *      if (value) {
-         *          res.send("Successful payment. Thank you for using the payment");
-         *      }
-         *      else {
-         *          res.send("There was an error processing the payment.' + value);
-         *      }
-         *  });
-         */
+        var dpromise = database.updateWalletAmount(-req.body.amount, req.body.merchantid, req.body.customerid, res);
+
+        dpromise.then((value) => { //send value as true or false
+           if (value) {
+               res.send("Successful payment. Thank you for using the payment");
+           }
+           else {
+               res.send("There was an error processing the payment." + value);
+           }
+        });
+
+        //TODO do wallet stuff here
+        //TODO send success on update wallet
+    }
+    else {
+        //res.send("Authorization required."); //for bot, send to storagequeue after complete
+        res.redirect("/loginpin");
+    }
+
+});
+
+//debug only
+app.get('/walletuse', (req,res) => {
+    if (!req.query.amount || !req.query.merchantid || !req.query.customerid) {
+        res.send("Please provide a proper amount, merchant id and customer id");
+        return;
+    }
+
+    if (authenticator.checkAuthorized(req.session)) {
+        var dpromise = database.updateWalletAmount(req.query.customerid, -req.query.amount);
+
+        dpromise.then((value) => { //send value as true or false
+            if (value) {
+                res.send("Successful payment. Thank you for using the payment");
+            }
+            else {
+                res.send("There was an error processing the payment." + value);
+            }
+        });
+
         //TODO do wallet stuff here
         //TODO send success on update wallet
     }
