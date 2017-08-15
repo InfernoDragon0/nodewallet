@@ -1,4 +1,4 @@
-const cosmosConfig = require("./BTCosmosconfig");
+
 const docdbClient = require("documentdb").DocumentClient;
 var crypto = require('crypto');
 var encryption = 'sha256';
@@ -7,9 +7,7 @@ const client = new docdbClient("https://jetransact.documents.azure.com:443/",
 { masterKey: "jXxaBwnQTqxkR1igcvDWPy02qjGfJJW3aceLte9FL89hllZSUKMpecFtRIPOEaFs0y6YWXbyT783KbpQf9teFA==" });
 const HttpStatusCodes = { NOTFOUND: 404 }
 
-cosmosConfig.primaryKey
-const databaseUrl = `dbs/${cosmosConfig.database.id}`;
-const collectionUrl = `${databaseUrl}/colls/${cosmosConfig.collection.id}`;
+const databaseUrl = `dbs/jElement`;
 const collectionUrlcustomerBTDetail = `${databaseUrl}/colls/customerBTDetail`;
 const collectionUrltransactionDetail = `${databaseUrl}/colls/transactionDetail`;
 
@@ -66,7 +64,7 @@ function insertNewCustomer(newcustomer_id, newBTwalletToken, customer_contact_no
             });
     });
 };
-
+findBTtoken('54321');
 // find client token for existing client ID
 function findBTtoken(customerID) {
     return new Promise((resolve, reject) => {
