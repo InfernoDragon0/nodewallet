@@ -231,7 +231,7 @@ function paymentSucessful(transaction_id, braintreeID) {
     });
 };
 // paymentSucessful('10')
-WalletTransaction('54321', -200.12, 'testID')
+WalletTransaction('54321', -20.12, 'testID')
 
 function WalletTransaction(clientID, Amount, btID) {
     var cpromise = updateWalletAmount(clientID, Amount);
