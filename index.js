@@ -89,8 +89,7 @@ app.post('/walletuse', (req, res) => {
     }
 
     if (authenticator.checkAuthorized(req.session)) {
-        var dpromise = database.updateWalletAmount(-req.body.amount, req.body.merchantid, req.body.customerid, res);
-
+        var dpromise = database.WalletTransaction(req.body.customerid,req.body.amount,"btID",req.body.merchantid);
         dpromise.then((value) => { //send value as true or false
             if (value) {
                 res.send("Successful payment. Thank you for using the payment");
@@ -118,17 +117,9 @@ app.get('/walletuse', (req, res) => {
     }
 
     if (authenticator.checkAuthorized(req.session)) {
-        var dpromise = database.updateWalletAmount(req.query.customerid, -req.query.amount);
+       database.WalletTransaction(req.query.customerid, req.query.amount,'BTID',req.query.merchantid,res );
 
-        dpromise.then((value) => { //send value as true or false
-            if (value) {
-                res.send("Successful payment. Thank you for using the payment");
-            }
-            else {
-                res.send("There was an error processing the payment." + value);
-            }
-        });
-
+        
         //TODO do wallet stuff here
         //TODO send success on update wallet
     }

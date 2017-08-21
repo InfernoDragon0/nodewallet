@@ -30,7 +30,7 @@ module.exports.findBTtoken = findBTtoken;
 module.exports.insertTransaction = insertTransaction;
 module.exports.paymentSucessful = paymentSucessful;
 module.exports.retrievePinandContactNo = retrievePinandContactNo;
-module.exports.updateWalletAmount = updateWalletAmount;
+module.exports.WalletTransaction = WalletTransaction;
 
 
 
@@ -241,13 +241,20 @@ function paymentSucessful(transaction_id, braintreeID) {
     });
 };
 // paymentSucessful('10')
-// WalletTransaction('54321', -20.12, 'testID')
+// WalletTransaction('09876',- 20.12, 'testID','null')
 
-function WalletTransaction(clientID, Amount, btID) {
+function WalletTransaction(clientID, Amount, btID,merchant_id,res) {
     var cpromise = updateWalletAmount(clientID, Amount);
     cpromise.then(function (value) {
+        console.log(value)
         if (value == 'Success') {
-            insertTransactionWalletTopUp(clientID, Amount, btID)
+            insertTransactionWalletTopUp(clientID, Amount, btID,merchant_id)
+            if (value == 'Success') {
+                res.send("Successful payment. Thank you for using the payment");
+            }
+            else {
+                res.send("There was an error processing the payment." + value);
+            }
         }
         else{};
     });
@@ -290,8 +297,9 @@ function updateWalletAmount(customerID, amount) {
         });
     });
 };
+// insertTransactionWalletTopUp('09876',20,'btID','123')
 
-function insertTransactionWalletTopUp(customer_id, amount, btTransaction_id) {
+function insertTransactionWalletTopUp(customer_id, amount, btTransaction_id,merchant_id) {
     return new Promise((resolve, reject) => {
         client.queryDocuments(collectionUrltransactionDetail,
             "Select * from c").toArray((err, results) => {
@@ -321,8 +329,8 @@ function insertTransactionWalletTopUp(customer_id, amount, btTransaction_id) {
                         'id': id,
                         'transaction_id': transaction_id,
                         'customer_id': customer_id,
-                        'merchant_id': '-1',
-                        'btTransaction_id': btTransaction_id,
+                        'merchant_id': merchant_id,
+                        'btTransaction_id': 'Wallet use',
                         'datetime': datetime,
                         'dateOnly': today,
                         'amount': amount,
