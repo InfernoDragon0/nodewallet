@@ -51,7 +51,15 @@ app.post('/authenticate', function (req, res) { //base page
         var promisething = authenticator.authRequest(req.session, req.body.user, req.body.pin);
         promisething.then((value) => {
             if (value) {
-                res.render(path.join(__dirname + '/2fa.html'));
+                var promisethingno2 = database.retrievePinandContactNo(req.body.user);
+                promisethingno2.then((value) => {
+                    res.render(path.join(__dirname + '/2fa.html'),
+                        {
+
+                            contactno:value[1]
+                        });
+                })
+
             }
             else {
                 res.send("Invalid user and pin combination. try again!");
@@ -74,7 +82,7 @@ app.post('/walletadd', (req, res) => {
     }
 });
 
-app.post('/walletuse', (req,res) => {
+app.post('/walletuse', (req, res) => {
     if (!req.body.amount || !req.body.merchantid || !req.body.customerid) {
         res.send("Please provide a proper amount, merchant id and customer id");
         return;
@@ -84,12 +92,12 @@ app.post('/walletuse', (req,res) => {
         var dpromise = database.updateWalletAmount(-req.body.amount, req.body.merchantid, req.body.customerid, res);
 
         dpromise.then((value) => { //send value as true or false
-           if (value) {
-               res.send("Successful payment. Thank you for using the payment");
-           }
-           else {
-               res.send("There was an error processing the payment." + value);
-           }
+            if (value) {
+                res.send("Successful payment. Thank you for using the payment");
+            }
+            else {
+                res.send("There was an error processing the payment." + value);
+            }
         });
 
         //TODO do wallet stuff here
@@ -103,7 +111,7 @@ app.post('/walletuse', (req,res) => {
 });
 
 //debug only
-app.get('/walletuse', (req,res) => {
+app.get('/walletuse', (req, res) => {
     if (!req.query.amount || !req.query.merchantid || !req.query.customerid) {
         res.send("Please provide a proper amount, merchant id and customer id");
         return;
@@ -132,7 +140,7 @@ app.get('/walletuse', (req,res) => {
 });
 
 app.get('/tfasuccess', (req, res) => {
-     res.send("Success 2FA authentication!");
+    res.send("Success 2FA authentication!");
 });
 
 app.use(function (req, res, next) {
