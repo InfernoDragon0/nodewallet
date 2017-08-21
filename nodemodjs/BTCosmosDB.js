@@ -1,3 +1,15 @@
+///////////////////////////////////////////////////////////////
+//   Transaction Details                                     //
+//   0= Transaction - Sucess ( Braintree )                   //
+//   1= Transaction - Pending ( Braintree )                  //
+//   2= Transaction - ChargeBack ( Refund ) ( Braintree )    //
+//   3= Transaction - Refund ( Braintree )                   //
+//   4= Wallet - Top Up                                      //
+//   5= Wallet - Pay                                         //
+// ////////////////////////////////////////////////////////////
+
+
+
 const docdbClient = require("documentdb").DocumentClient;
 var crypto = require('crypto');
 var encryption = 'sha256';
@@ -130,8 +142,7 @@ function addRefund(customer_id, merchant_id, btTransaction_id, amount, order_id)
                     'dateOnly': today,
                     'amount': amount,
                     'order_id': order_id,
-                    'transaction_detail': 'Refund - Purchase',
-                    'transact_check': 'N'
+                    'transaction_detail': 3
                 });
 
                 resolve(transaction_id);
@@ -187,8 +198,7 @@ function insertTransaction(customer_id, merchant_id, btTransaction_id, datetime,
                     'dateOnly': today,
                     'amount': amount,
                     'order_id': order_id,
-                    'transaction_detail': 'Pending - Purchase',
-                    'transact_check': 'N'
+                    'transaction_detail': 2
                 });
 
                 resolve(transaction_id);
@@ -215,7 +225,7 @@ function paymentSucessful(transaction_id, braintreeID) {
                 }
                 for (let result of results) {
                     console.log("ihi");
-                    result.transaction_detail = 'Sucessful - Purchase';
+                    result.transaction_detail = 0;
                     result.btTransaction_id = braintreeID;
                     let documentUrl = `${collectionUrltransactionDetail}/docs/${transaction_id}`;
                     client.replaceDocument(documentUrl, result, (err, result) => {
@@ -316,8 +326,7 @@ function insertTransactionWalletTopUp(customer_id, amount, btTransaction_id) {
                         'datetime': datetime,
                         'dateOnly': today,
                         'amount': amount,
-                        'transaction_detail': 'Wallet-Payment',
-                        'transact_check': 'N'
+                        'transaction_detail': 5
                     });
                 } else {
                     console.log('Wallet-TopUp')
@@ -331,8 +340,7 @@ function insertTransactionWalletTopUp(customer_id, amount, btTransaction_id) {
                         'datetime': datetime,
                         'dateOnly': today,
                         'amount': amount,
-                        'transaction_detail': 'Wallet-TopUp',
-                        'transact_check': 'N'
+                        'transaction_detail': 4
                     });
                 };
 
