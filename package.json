@@ -22,5 +22,8 @@
     "body-parser": "latest",
     "express": "latest",
     "ejs": "latest"
+  },
+  "devDependencies": {
+    "request": "^2.81.0"
   }
 }
