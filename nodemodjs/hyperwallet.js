@@ -2,9 +2,9 @@ var request = require('request');
 
 var url = "http://175.156.152.251:3000/"
 
-getWalletByID(1)
+getWalletByClientID(123);
 
-function getWalletByID(id) {
+function getWalletByClientID(id) {
     request(url + 'api/Wallet?filter=%7B%22clientID%22%3A%20%22' + id + '%22%7D', function (error, response, body) {
         if (error) {
             console.log('error:', error); // Print the error if one occurred 
