@@ -11,6 +11,11 @@ function sendAuthRequest() {
     sendPost("/authenticate", "user=" + user + "&pin=" + pin);
 }
 
+function loginSMS() {
+    var lock = new Auth0LockPasswordless('EtHOvCUbD2F6s46WjSx0inahQV673bq9', 'mushroom.auth0.com');
+    lock.sms( {callbackURL: 'http://localhost:5001/tfasuccess'} );
+}
+
 function sendPost(url, params) {
 http.open("POST", url, true);
 
@@ -20,7 +25,10 @@ http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 http.onreadystatechange = function() {//Call a function when the state changes.
     if(http.readyState == 4 && http.status == 200) {
         document.write(http.responseText);
+        if (http.responseText.includes("Login successful")) {
+            //loginSMS();
+        }
     }
-}
+};
 http.send(params);
 }
